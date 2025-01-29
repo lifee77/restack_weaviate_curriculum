@@ -2,6 +2,7 @@ import asyncio
 import os
 from src.functions.weaviate_functions import semantic_search, hybrid_search
 from src.functions.gemini_function_call import gemini_function_call
+from src.functions.vector_similarity_search import vector_similarity_search
 from src.client import client
 from src.workflows.workflow import CurriculumWorkflow
 from watchfiles import run_process
@@ -9,11 +10,10 @@ from restack_ai.restack import ServiceOptions
 import webbrowser
 
 async def main():
-    
     await asyncio.gather(
         client.start_service(
             workflows=[CurriculumWorkflow],
-            functions=[semantic_search, hybrid_search]
+            functions=[semantic_search, hybrid_search, vector_similarity_search]
         ),
         client.start_service(
             functions=[gemini_function_call],

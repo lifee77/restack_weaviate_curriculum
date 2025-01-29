@@ -40,7 +40,7 @@ class CurriculumWorkflow:
             
             ## Workshop Step 7:  Add a workflow step to get a summary of the curriculum
             
-            # summary = await workflow.step(gemini_function_call, input=FunctionInputParams(user_content=f"Make a two sentence summary for an audio ad of the following curriculum: {json.dumps(curriculum)}", tools=False, structured_output=False), start_to_close_timeout=timedelta(seconds=120), retry_policy=RetryPolicy(maximum_attempts=1), task_queue="gemini")
+            summary = await workflow.step(gemini_function_call, input=FunctionInputParams(user_content=f"Make a two sentence summary for an audio ad of the following curriculum: {json.dumps(curriculum)}", tools=False, structured_output=False), start_to_close_timeout=timedelta(seconds=120), retry_policy=RetryPolicy(maximum_attempts=1), task_queue="gemini")
             
             # log.info(f"Summary: {summary}")
                 
