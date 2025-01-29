@@ -3,8 +3,9 @@ import os
 from src.functions.weaviate_functions import semantic_search, hybrid_search
 from src.functions.gemini_function_call import gemini_function_call
 from src.functions.vector_similarity_search import vector_similarity_search
+from src.functions.text_to_braille import text_to_braille  # ✅ New Function
 from src.client import client
-from src.workflows.workflow import CurriculumWorkflow
+from src.workflows.workflow import CurriculumWorkflow, BrailleWorkflow  # ✅ New Workflow
 from watchfiles import run_process
 from restack_ai.restack import ServiceOptions
 import webbrowser
@@ -12,8 +13,8 @@ import webbrowser
 async def main():
     await asyncio.gather(
         client.start_service(
-            workflows=[CurriculumWorkflow],
-            functions=[semantic_search, hybrid_search, vector_similarity_search]
+            workflows=[CurriculumWorkflow, BrailleWorkflow],  # ✅ Added Braille Workflow
+            functions=[semantic_search, hybrid_search, vector_similarity_search, text_to_braille]  # ✅ Added text_to_braille
         ),
         client.start_service(
             functions=[gemini_function_call],

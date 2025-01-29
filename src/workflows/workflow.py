@@ -7,6 +7,7 @@ with import_functions():
     from src.functions.weaviate_functions import semantic_search, hybrid_search, QueryInput
     from src.functions.gemini_function_call import gemini_function_call, FunctionInputParams
     from src.functions.vector_similarity_search import vector_similarity_search
+    from src.functions.text_to_braille import text_to_braille, BrailleInput  # ✅ New import
 
 class CurriculumInput(BaseModel):
     user_content: str = Field(default='I want to learn how about coding with Python')
@@ -79,8 +80,22 @@ class CurriculumWorkflow:
                 retry_policy=RetryPolicy(maximum_attempts=1), 
                 task_queue="gemini"
             )
-            
-            return curriculum["parsed"]
+
+            ## ✅ NEW STEP: Convert the Summary into Braille
+            braille_output = await workflow.step(
+                text_to_braille,
+                input=BrailleInput(text=summary),
+                start_to_close_timeout=timedelta(seconds=10),
+                retry_policy=RetryPolicy(maximum_attempts=1)
+            )
+
+            log.info(f"Braille Output: {braille_output.braille_text}")
+
+            return {
+                "curriculum": curriculum["parsed"],
+                "braille_summary": braille_output.braille_text  # ✅ Now includes Braille summary
+            }
+
         except Exception as e:
             log.error(f"Error in CurriculumWorkflow: {e}")
             raise e
