@@ -5,6 +5,12 @@ from pydantic import BaseModel
 import weaviate
 from weaviate.classes.init import Auth
 
+# Import weaviate_tools if it's defined in weaviate_functions.py
+try:
+    from src.functions.weaviate_functions import weaviate_tools
+except ImportError:
+    weaviate_tools = []  # Fallback to an empty list if import fails
+
 class VectorSearchInput(BaseModel):
     query: str
     limit: int = 3  # Default limit to return top 3 results
@@ -64,16 +70,17 @@ async def vector_similarity_search(input: VectorSearchInput) -> VectorSearchOutp
         log.error("Vector similarity search failed", error=e)
         raise e
 
-# Weaviate function schema for Gemini integration
-weaviate_tools.append({
-    "name": "vector_similarity_search",
-    "description": "Finds relevant content using vector similarity search in Weaviate.",
-    "parameters": {
-        "type": "OBJECT",
-        "properties": {
-            "query": {"type": "STRING"},
-            "limit": {"type": "INTEGER"}
-        },
-        "required": ["query"]
-    }
-})
+# ✅ Append the function to weaviate_tools safely
+if isinstance(weaviate_tools, list):  # Ensure it's a list
+    weaviate_tools.append({
+        "name": "vector_similarity_search",
+        "description": "Finds relevant content using vector similarity search in Weaviate.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "query": {"type": "STRING"},
+                "limit": {"type": "INTEGER"}
+            },
+            "required": ["query"]
+        }
+    })
